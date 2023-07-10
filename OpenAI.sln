@@ -5,6 +5,8 @@ VisualStudioVersion = 25.0.1705.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPT", "GPT\GPT.csproj", "{29198DE3-1D44-4206-B240-417365C59C3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shell-GPT", "GPT-Shell\Shell-GPT.csproj", "{CCF389DB-2D9C-473F-AF4F-AF3A7BB1394B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{29198DE3-1D44-4206-B240-417365C59C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29198DE3-1D44-4206-B240-417365C59C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29198DE3-1D44-4206-B240-417365C59C3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCF389DB-2D9C-473F-AF4F-AF3A7BB1394B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCF389DB-2D9C-473F-AF4F-AF3A7BB1394B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCF389DB-2D9C-473F-AF4F-AF3A7BB1394B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCF389DB-2D9C-473F-AF4F-AF3A7BB1394B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

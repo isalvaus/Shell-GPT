@@ -6,7 +6,7 @@ namespace OpenAI.Chat
         /// <summary>
         /// The role of the author of this message. One of system, user, or assistant.
         /// </summary>
-        public string role { get; set; } = "user";
+        public string role { get; set; }
 
         /// <summary>
         /// The content of the message

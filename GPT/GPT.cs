@@ -17,28 +17,24 @@ namespace OpenAI
     {
         HttpClient http = new();
 
-        
-        public GPT()
+        public GPT(String APIKey)
         {
-            var config = new ConfigurationBuilder()
-                .AddUserSecrets<GPT>()
-                .Build();
-         
 
             http.BaseAddress = new Uri("https://api.openai.com");
-            http.DefaultRequestHeaders.Authorization = new("Bearer", config["API-Key"]);
+            http.DefaultRequestHeaders.Authorization = new("Bearer", APIKey);
             http.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json")
             );
             
         }
 
-
+        
         
         public string? prompt { get; set; }
 
         // Declare the parameters for the cmdlet.
-        public string model { get; set; } = "text-davinci-003";
+        public string completions_model { get; set;} = "text-davinci-003";
+        public string chat_model { get; set; } = "gpt-4";
 
         public double? temperature { get; set; } = 0;
         public int? max_tokens { get; set; } = 2048;
@@ -48,28 +44,10 @@ namespace OpenAI
         public async Task<String?> completionRequest(String prompt, Double? temperature = null, int? max_tokens = null )
         {
 
-            // Platform
-            String platform = "";
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                platform = "Windows";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                platform = "Linux";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                platform = "MacOS";
-            }
-
-
             var request = JsonSerializer.Serialize(
                  new Completions.Request {
-                     model = this.model, 
-                     prompt = $"genera {platform} script, {prompt}",
-                     //messages = new[] { new Chat.Message() {content = $"genera {platform} script, {prompt}", name = Environment.GetEnvironmentVariable("USER")} },
+                     model = this.completions_model, 
+                     prompt = prompt,
                      temperature = temperature ?? this.temperature,
                      max_tokens = max_tokens ?? this.max_tokens
                  }); 
@@ -85,27 +63,8 @@ namespace OpenAI
                 {
                     if (await JsonSerializer.DeserializeAsync<Completions.Response>(httpResponse.Content.ReadAsStream()) is Completions.Response response)
                     {
-                        var text = response.choices.First().text;
-                        System.Diagnostics.Debug.WriteLine($"GPT response: {text}");
-
-                        string script = Path.GetTempFileName();
-                        File.WriteAllText(script, text);
-
-
-                        Process process = new Process();
-
-                        process.StartInfo.Verb = "runas";
-
-                        process.StartInfo.FileName = "/bin/bash";
-                        process.StartInfo.Arguments = script;
-
-                        process.StartInfo.UseShellExecute = false;
-                        process.StartInfo.RedirectStandardOutput = true;
-                        process.StartInfo.CreateNoWindow = true;
-
-                        process.Start();
-
-                        Console.WriteLine(process.StandardOutput.ReadToEnd());
+                        responseText = response.choices.First().text;
+                        System.Diagnostics.Debug.WriteLine($"GPT response: {responseText}");
 
                     }
                 }
@@ -115,6 +74,45 @@ namespace OpenAI
             }
 
             
+
+            return responseText;
+
+        }
+        public async Task<String?> chatRequest(String content, Double? temperature = null, int? max_tokens = null)
+        {
+
+            var request = JsonSerializer.Serialize(
+                 new Chat.Request
+                 {
+                     model = this.chat_model,
+                     messages = new[] { new Chat.Message() {role = "user", content = content, name = Environment.GetEnvironmentVariable("USER")} },
+                     temperature = temperature ?? this.temperature,
+                     max_tokens = max_tokens ?? this.max_tokens
+                 });
+
+            String? responseText = null;
+
+
+            System.Diagnostics.Debug.WriteLine(request);
+
+            try
+            {
+                if (await http.PostAsync(Endpoints.Chat, new StringContent(request, Encoding.UTF8, "application/json")) is HttpResponseMessage httpResponse)
+                {
+                    if (await JsonSerializer.DeserializeAsync<Chat.Response>(httpResponse.Content.ReadAsStream()) is Chat.Response response)
+                    {
+                        responseText = response.choices.First().message.content;
+                        System.Diagnostics.Debug.WriteLine($"GPT response: {responseText}");
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+
 
             return responseText;
 

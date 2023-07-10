@@ -4,6 +4,22 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>879bef16-d5c9-469a-b886-b61bb450d1c1</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.3.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="GPTCmd.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Chat\" />
+    <None Remove="Completions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Chat\" />
+    <Folder Include="Completions\" />
+  </ItemGroup>
 </Project>
