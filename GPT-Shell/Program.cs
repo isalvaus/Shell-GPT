@@ -3,9 +3,7 @@
 using OpenAI;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
-using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
-using System.Speech.Synthesis;
 using System.Runtime.InteropServices;
 
 var config = new ConfigurationBuilder()
@@ -17,13 +15,13 @@ string platform = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Windows
 
 
 
+
 var gpt = new GPT(config["API-Key"]);
 
 var user = Environment.GetEnvironmentVariable("USER");
 
 while (true)
 {
-    Console.WriteLine(platform);
     Console.Write($"{user}> ");
     var responseText = await gpt.completionRequest($"genera {platform} script, {Console.ReadLine()}");
 

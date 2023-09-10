@@ -1,12 +1,8 @@
-﻿using System.Management.Automation;  // PowerShell namespace.
+﻿
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Microsoft.PowerShell.Commands;
-using Microsoft.Extensions.Configuration;
 using System.Text;
-using OpenAI;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+
 
 namespace OpenAI
 {
@@ -43,6 +39,7 @@ namespace OpenAI
         // Hace una peticion al endpoint Completions.
         public async Task<String?> completionRequest(String prompt, Double? temperature = null, int? max_tokens = null )
         {
+            double? temp = temperature ?? this.temperature;
 
             var request = JsonSerializer.Serialize(
                  new Completions.Request {
@@ -61,11 +58,18 @@ namespace OpenAI
             {
                 if (await http.PostAsync(Endpoints.Completions, new StringContent(request, Encoding.UTF8, "application/json")) is HttpResponseMessage httpResponse)
                 {
-                    if (await JsonSerializer.DeserializeAsync<Completions.Response>(httpResponse.Content.ReadAsStream()) is Completions.Response response)
+                    if (httpResponse.IsSuccessStatusCode)
                     {
-                        responseText = response.choices.First().text;
-                        System.Diagnostics.Debug.WriteLine($"GPT response: {responseText}");
+                        if (await JsonSerializer.DeserializeAsync<Completions.Response>(httpResponse.Content.ReadAsStream()) is Completions.Response response)
+                        {
+                            responseText = response.choices.First().text;
+                            System.Diagnostics.Debug.WriteLine($"GPT response: {responseText}");
 
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Bad Http Response,{httpResponse.StatusCode} {httpResponse.ReasonPhrase} ");
                     }
                 }
             }
